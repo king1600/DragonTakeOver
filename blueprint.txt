@@ -1,0 +1,115 @@
+Game: Dragon Takeover
+
+* add songs:
+- even so come
+- zoetrope
+
+## Biomes, Bosses & Songs
+-> main area: pokemon battle royal wii style
+sounds = {
+    "dead":"roses_dead.ogg"
+    "boss victory": "victory.ogg"
+}
+
+1. town = village.ogg
+
+2. Snow
+ - snow drags (basic)
+ - icehogs (shoot spikes)
+ - Glaciers (Shoot glaciers and slow hit)
+ * main area: "love_live.ogg"
+ * boss: Blizzard - spawns mobs randomly
+	- 60% snow drags
+	- 30% icehogs
+	- 10% Glaciers
+	- music: "waves.ogg"
+
+3. Swamp
+ - blobs (basic)
+ - mayshroms (every 3 secs emit poison)
+ - GlothTrees +delay(shoot wave of slime, 1s after aggro/in range)
+ * main area: "soul_full.ogg"
+ * boss: ToadDragon - 3 attacks
+	- 40% giant muk ball
+	- 40% GlothTree atk (+more dmg)
+	- 20% Dragon Beam
+	- music: "vibez_hd.ogg"
+
+4. Hell
+ - minion (basic)
+ - pepperJacks (beef up & charge in range)+end_delay
+ - Furnaces (Flamethrower for 3 sec)+delay +cooldown
+ * main area: "blade_of_hope.ogg"
+ * boss: Meteor - Spawn mobs randomly:
+	- 60% minions
+	- 40% Furnaces
+	- music: "waves.ogg"
+
+5. The Nova Void
+ - dark blob (+dmg)
+ - dark Glaciers (+speed)
+ - dark Furnaces (lower delay)
+ * main area: "blade_of_hope.ogg"
+ * boss: Niel - Does random attacks + Ton of HP
+	- %25 dark blobs
+	- %25 dark Furnaces
+	- %25 mayshroms
+	- %25 void wave (horizontal shockwave)
+	- music: "red-lights.ogg"
+ * Final-boss: Drag-Niel
+	- %25 +1 Blizzard
+	- %25 void wave
+	- %25 dark hole (slow movement, if idle suck in)+instakill
+	- %25 stage wipe (only top+bot of map are safe)
+	- music: "monody.ogg"
+
+6. Ending
+- clips of dragons being returned
+- music: "beat_again.ogg"
+
+
+## Classes
+1. Mage (Crystal)
+-------------------
+shoots fire - low dmg, cooldown
+special 1   - freeze line
+big special - flame storm
+
+2. Knight (Jack)
+--------------------
+swings sword - med dmg, atk speed limit
+special 1    - shield for x amount of secs
+big special  - Giant sword in one direction dealing dmg
+
+3. Dark Being (Nathan)
+--------------------
+summon minions and hit - low dmg, ap drains
+special 1    - summon giant monster
+big special  - become monster for x amount of secs
+
+## Characters
+Niel - Nova being: main "bad guy"
+Jack - Knight noob but wanting to be the best
+Crystal - Mage that thinks shes best
+Nathan  - Being with a special power
+
+## Story
+Long ago, there were dragons that lived with humans.
+the humans haf giften powers and they helped the dragons survive as pets.
+One "Nova" being from the being clan wanted a different world.
+The Nova's name was Niel. The "Nova" clan that he belonged to was killed by a wild dragon.
+After that, he sought to rid dragons from the world.
+Niel kidnapps a bunch of pet dragons and the local towns go crazy.
+He orders that only 1 child from each clan come and face him if they want the dragons back.
+He then converts all the dragons in each town to monsters with a virus he was making since he was little.
+The Village has to drive out the dragons and they send the best kids in their town to fight Neil.
+The kids names were "Jack", "Crystal" and "Nathan". You get to play as one of them.
+They go on a journey slaying infected dragons in different areas with different abilities.
+They go through different dragon biomes: "Hell","Swamp",and "Snow". Each place has different dragons.
+Each biome has a boss to defeat and when you defeat the boss, it drops it's perl.
+You have to get all 3 perls to unlock the portal to the "Nova" village dimension.
+Once you've done that, you face a small amount of Nova + (Hell, swamp or Snow) dragons.
+After you beat those, then you have to face the ultimate boss.
+Niel himself turns into a giant dragon. You have to work together to beat Neil.
+After you beat him, you return to the village with all the dragons that were kidnapped.
+And you have beaten the game.
