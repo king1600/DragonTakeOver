@@ -1,8 +1,0 @@
-{
-  "music":"village",
-  "map":"village.tmx",
-  "width":1280,
-  "height":720,
-  "size":[1280, 720],
-  "spawn":[640, 360]
-}
