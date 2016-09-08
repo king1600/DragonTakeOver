@@ -13,32 +13,45 @@ class Sprite(Block):
     speed  = 5
     accel  = .5
 
-    MAX_HP   = 100
-    MAX_AP   = 100
-    HP       = MAX_HP
-    AP       = MAX_AP
-    attack   = 15
-    defense  = 5
-
-    ani_frame = 0
-    ani_count = 0
-    ani_delay = 5
-    can_ani = True
-    has_idle = True
-    idle = True
-    idle_frames = {
-        str(DIR.LEFT): [],
-        str(DIR.RIGHT): []
-    }
-    frames = {
-        str(DIR.LEFT): [],
-        str(DIR.RIGHT): []
-    }
-
     def __init__(self, game):
+        self.create_basics()
         super(Sprite, self).__init__()
         self.game = game
         self.image = hitbox_img
+
+        self.bar_width  = self.WIDTH*1.5
+        self.hp_evel    = 20
+
+    def create_basics(self):
+        self.MAX_HP = 100
+        self.MAX_AP = 100
+        self.HP = self.MAX_HP
+        self.AP = self.MAX_AP
+        self.attack = 15
+
+        # Regeneration
+        self.HP_REGEN = 1
+        self.HP_DELAY = 10
+        self.HP_COUNT = 0
+
+        self.AP_REGEN = 3
+        self.AP_DELAY = 10
+        self.AP_COUNT = 0
+
+        self.ani_frame = 0
+        self.ani_count = 0
+        self.ani_delay = 5
+        self.can_ani = True
+        self.has_idle = True
+        self.idle = True
+        self.idle_frames = {
+            str(self.DIR.LEFT): [],
+            str(self.DIR.RIGHT): []
+        }
+        self.frames = {
+            str(self.DIR.LEFT): [],
+            str(self.DIR.RIGHT): []
+        }
 
     def change_direction(self, direction):
         self.direction = direction
@@ -51,6 +64,7 @@ class Sprite(Block):
 
         self.rect.x += self.hspeed
         self.rect.y += self.vspeed
+
         if self.hspeed == 0 and self.vspeed == 0:
             self.idle = False
 
@@ -84,5 +98,23 @@ class Sprite(Block):
                     else:
                         self.use_frames(frames)
 
+    def regen(self):
+        self.HP_COUNT += 1
+        self.AP_COUNT += 1
+
+        if self.HP_COUNT > self.HP_DELAY:
+            self.HP_COUNT = 0
+            if self.HP < self.MAX_HP:
+                self.HP += self.HP_REGEN
+        if self.AP_COUNT > self.AP_DELAY:
+            self.AP_COUNT = 0
+            if self.AP < self.MAX_AP:
+                self.AP += self.AP_REGEN
+
+        if self.HP > self.MAX_HP: self.HP = self.MAX_HP
+        if self.AP > self.MAX_AP: self.AP = self.MAX_AP
+
     def set_hitbox_size(self, size):
         self.rect = pygame.Rect((self.rect.x, self.rect.y), size)
+        self.SIZE = self.WIDTH, self.HEIGHT = size
+        self.bar_width = self.WIDTH

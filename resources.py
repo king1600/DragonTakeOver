@@ -1,6 +1,7 @@
 import os
 import pygame
 import colors
+import threading
 
 rsc  = os.path.join("resources")
 img  = os.path.join(rsc, "images")
@@ -41,10 +42,11 @@ class ResourceManager:
     def load_resources(self):
         self.game.debug("Scale algorithm> " + pygame.transform.get_smoothscale_backend())
 
-        self.load_music()
-        self.load_backgrounds()
-        self.load_sprite_images()
-        self.load_other()
+        loads = [self.load_music, self.load_backgrounds, self.load_sprite_images, self.load_other]
+        threads = []
+        for l in loads:
+            threads.append(self.create_thread(l))
+        self.join_and_delete(threads)
 
 
     """ Basic Load functions """
@@ -78,6 +80,9 @@ class ResourceManager:
                 for y in ['crystal','nathan','jack']:
                     if y in str(f):
                         size = (96, 96)
+                for y in ['ice_blob']:
+                    if y in str(f):
+                        size = (64, 64)
 
                 img = self.load_image(p, size, colors.WHITE)
                 normal.append(img)
@@ -86,50 +91,99 @@ class ResourceManager:
             self.sps[f] = [normal, flipped]
 
     def load_music(self):
-        self.game.debug("Loading music...")
-        self.music = {}
-        songs = [f for f in os.listdir(snd) if os.path.isfile(os.path.join(snd, f))]
-        for s in songs:
-            s_path = os.path.join(snd, s)
-            sound = pygame.mixer.Sound(s_path)
+        try:
+            self.game.debug("Loading music...")
+            self.music = {}
+            songs = [f for f in os.listdir(snd) if os.path.isfile(os.path.join(snd, f))]
+            threads = []
+            for s in songs:
+                threads.append(self.create_thread(self.threaded_load_sound, s))
+            self.join_and_delete(threads)
 
-            s = self.game.manager.get_level_name(s)
-            self.music[s] = sound
+        except Exception as e:
+            self.game.debug(str(e))
+
+    def threaded_load_sound(self, s):
+        s_path = os.path.join(snd, s)
+        sound = pygame.mixer.Sound(s_path)
+
+        s = self.game.manager.get_level_name(s)
+        self.music[s] = sound
 
     def load_other(self):
-        self.black = pygame.Surface((64, 64))
-        self.black.fill(colors.BLACK)
+        try:
+            self.game.debug("Loading other resources..")
+            self.black = pygame.Surface((64, 64))
+            self.black.fill(colors.BLACK)
 
-        bg_path = os.path.join(img, "bg.jpg")
-        self.scene_bg = self.load_image(bg_path, (self.game.SIZE))
+            # scene background
+            bg_path = os.path.join(img, "bg.jpg")
+            self.scene_bg = self.load_image(bg_path, (self.game.SIZE))
 
-        bar_path = os.path.join(img, "health_bar.png")
-        self.bar = self.load_image(bar_path)
+            # big dialogue box
+            big_box_path = os.path.join(img, "box.png")
+            size = (self.game.WIDTH/10*8, self.game.HEIGHT/10*8 + 16)
+            self.big_box  = self.load_image(big_box_path, size)
 
-        self.load_names()
-        self.load_scenes()
-        self.load_dialogue()
+            # scale image
+            scale_path = os.path.join(img, "scale.png")
+            self.scale = self.load_image(scale_path, (24, 24), colors.WHITE)
+
+            # boss scale image
+            boss_scale_path = os.path.join(img, "boss_scale.png")
+            self.boss_scale = self.load_image(boss_scale_path, (24, 24), colors.WHITE)
+
+            # close button
+            close_path = os.path.join(img, "close_button.png")
+            self.close_btn = self.load_image(close_path, (24, 24), colors.BLACK)
+
+            # buy button
+            buy_path = os.path.join(img, "buy.png")
+            self.buy_btn = self.load_image(buy_path, (64, 32))
+
+            # cache scale number font renders
+            self.scale_nums = {}
+            font = pygame.font.Font(None, 32)
+            for x in range(self.game.MAX_SCALES + 1):
+                text = font.render(str(x), 1, colors.SC_COLOR)
+                self.scale_nums[str(x)] = text
+
+            # shop text
+            self.shop_text = {}
+            for x in self.game.shop.choices:
+                self.shop_text[x] = font.render(str(x), 1, (10,10,10))
+
+            self.load_names()
+            self.load_scenes()
+            self.load_dialogue()
+
+        except Exception as e:
+            self.game.debug("RSC.Other Error: " + str(e))
 
     def load_dialogue(self):
-        self.game.debug("Loading Dialogue & Faces...")
+        try:
+            self.game.debug("Loading Dialogue & Faces...")
 
-        d_path = os.path.join(img, "dialogue_box.png")
-        size = (self.game.WIDTH/10*8, self.game.HEIGHT/5)
-        self.dbox = self.load_image(d_path, size, colors.BLACK)
+            d_path = os.path.join(img, "dialogue_box.png")
+            size = (self.game.WIDTH/10*8, self.game.HEIGHT/5)
+            self.dbox = self.load_image(d_path, size, colors.BLACK)
 
-        # load face images
-        self.faces = {}
-        face_path = os.path.join(img, "faces")
-        size = (self.game.WIDTH/10*2, self.game.HEIGHT/5)
-        for x in os.listdir(face_path):
-            x_name = self.game.manager.get_level_name(x)
-            image = self.load_image(os.path.join(face_path, x), size, colors.WHITE)
-            self.faces[x_name] = image
+            # load face images
+            self.faces = {}
+            face_path = os.path.join(img, "faces")
+            size = (self.game.WIDTH/10*2, self.game.HEIGHT/5)
+            for x in os.listdir(face_path):
+                x_name = self.game.manager.get_level_name(x)
+                image = self.load_image(os.path.join(face_path, x), size, colors.WHITE)
+                self.faces[x_name] = image
 
-        # generate renderd text for dialog
-        font = pygame.font.Font(None, 32)
-        for x in self.dialog:
-            self.dialog[x] = font.render(x, 1, (10,10,10))
+            # generate renderd text for dialog
+            font = pygame.font.Font(None, 32)
+            for x in self.dialog:
+                self.dialog[x] = font.render(x, 1, (10,10,10))
+
+        except Exception as e:
+            self.game.debug("RSC.Dialogue Error: " + str(e))
 
     def load_names(self):
         self.names = {
@@ -185,3 +239,17 @@ class ResourceManager:
         surface = pygame.Surface(size)
         surface.fill(color)
         return surface
+
+    def join_and_delete(self, threads):
+        for t in threads:
+            t.join()
+            try: threads.remove(t)
+            except: pass
+            del t
+        del threads
+
+    def create_thread(self, func, *args):
+        t = threading.Thread(target=func, args=args)
+        t.daemon = True
+        t.start()
+        return t

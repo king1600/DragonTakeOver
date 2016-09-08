@@ -10,7 +10,7 @@ class Camera(object):
 		self.state = pygame.Rect(0, 0, map_size[0], map_size[1])
 
 	def apply(self, target):
-		return target.rect.move(self.state.topleft)
+		return target.move(self.state.topleft)
 
 	def update(self, target):
 		self.state = self.complex_camera(target.rect)

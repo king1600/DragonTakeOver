@@ -10,17 +10,14 @@ class Child(Sprite):
     IS_ALIVE = True
 
 
-    UP = pygame.K_w
-    DOWN = pygame.K_s
-    LEFT = pygame.K_a
+    UP    = pygame.K_w
+    DOWN  = pygame.K_s
+    LEFT  = pygame.K_a
     RIGHT = pygame.K_d
 
     v_decel = False
     h_decel = False
     s_limit = 1
-
-    level      = 1
-    xp_to_next = 5
 
     def __init__(self, game, classname):
         Sprite.__init__(self, game)
@@ -29,9 +26,19 @@ class Child(Sprite):
         self.can_ani = True
         self.image = pygame.Surface(self.SIZE)
         self.image.fill(colors.GREEN)
-        self.set_hitbox_size((48, 48))
+        self.set_hitbox_size((32, 32))
 
         self.load_frames()
+
+        # set default picture
+        if self.can_ani:
+            try:
+                if self.has_idle:
+                    self.image = self.idle_frames[str(self.DIR.RIGHT)][0]
+                else:
+                    self.image = self.frames[str(self.DIR.RIGHT)][0]
+            except:
+                pass
 
     def load_frames(self):
         if self.name.lower() == "nathan":
@@ -41,7 +48,7 @@ class Child(Sprite):
         elif self.name.lower() == "jack":
             Jack(self)
         else:
-            self.can_ani = False
+            pass
 
     def update(self):
         # move player

@@ -1,9 +1,7 @@
 import pygame
-import os
 import random
 
 from child import Child
-from block import *
 
 class States:
     FOLLOW = 0x0
@@ -23,11 +21,11 @@ class AI_Bot(Child):
         self.state = self.states.FOLLOW
 
         if len(self.game.bots) == 0:
-            self.radius_x = 30
-            self.radius_y = 30
+            self.radius_x = 40
+            self.radius_y = 40
         else:
-            self.radius_x = 70
-            self.radius_y = 70
+            self.radius_x = 80
+            self.radius_y = 80
 
         self.keys = {
             self.UP:False, self.DOWN:False,
@@ -35,15 +33,19 @@ class AI_Bot(Child):
         }
 
         self.player = self.game.player
+        self.MAX_HP += self.player.party_health
+        self.attack += self.player.party_attack
+
         self.block_id = "bot"
-        self.can_ani = True#False
+        self.set_hitbox_size((32, 32))
+
+        #self.image = pygame.Surface(self.SIZE)
+        #self.image.fill(colors.GREEN)
+        #self.can_ani = True
 
     def update(self):
         Child.update(self)
-
-        #self.game.debug("{}> {} {}".format(
-        #    self.name, self.rect.centerx, self.rect.centery
-        #))
+        self.regen()
 
         ### Follow Player ###
         if self.state == self.states.FOLLOW:
@@ -104,65 +106,17 @@ class AI_Bot(Child):
 
         self.set_pos(rand_x, rand_y)
 
+
 """ Different types of Bots """
 
 class NathanBot(AI_Bot):
-    DIR = DirectionEnum()
-    direction = DIR.RIGHT
-    ani_frame = 0
-    ani_count = 0
-    ani_delay = 5
-    can_ani = True
-    has_idle = True
-    idle = True
-    idle_frames = {
-        str(DIR.LEFT): [],
-        str(DIR.RIGHT): []
-    }
-    frames = {
-        str(DIR.LEFT): [],
-        str(DIR.RIGHT): []
-    }
-
     def __init__(self, game, name):
         AI_Bot.__init__(self, game, name)
 
 class CrystalBot(AI_Bot):
-    DIR = DirectionEnum()
-    direction = DIR.RIGHT
-    ani_frame = 0
-    ani_count = 0
-    ani_delay = 5
-    can_ani = True
-    has_idle = True
-    idle = True
-    idle_frames = {
-        str(DIR.LEFT): [],
-        str(DIR.RIGHT): []
-    }
-    frames = {
-        str(DIR.LEFT): [],
-        str(DIR.RIGHT): []
-    }
     def __init__(self, game, name):
         AI_Bot.__init__(self, game, name)
 
 class JackBot(AI_Bot):
-    DIR = DirectionEnum()
-    direction = DIR.RIGHT
-    ani_frame = 0
-    ani_count = 0
-    ani_delay = 5
-    can_ani = True
-    has_idle = True
-    idle = True
-    idle_frames = {
-        str(DIR.LEFT): [],
-        str(DIR.RIGHT): []
-    }
-    frames = {
-        str(DIR.LEFT): [],
-        str(DIR.RIGHT): []
-    }
     def __init__(self, game, name):
         AI_Bot.__init__(self, game, name)

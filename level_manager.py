@@ -4,11 +4,15 @@ import random
 
 import pygame
 from pytmx.util_pygame import load_pygame
+from sprites.ice_blob import IceBlob
 
-from sprites import Block
+MOBS = {
+    "ice_blob":IceBlob
+}
 
 class LevelManager:
     lvl_path = os.path.join("levels")
+    tmx_path = os.path.join(lvl_path, "tmx_data")
 
     def __init__(self, game):
         self.game = game
@@ -19,40 +23,47 @@ class LevelManager:
         self.collisions = {} # name : [array of Rects]
 
         self.level  = "village"
-        self.last_save_loc = None
 
-        lvl_files = [f for f in os.listdir(self.lvl_path)]
-        for l in lvl_files:
+        try:
+            self.game.debug("loading levels...")
 
-            # Determine file type
-            if l.endswith(".json"): ftype = 'json'
-            elif l.endswith(".tmx"): ftype  = 'tmx'
-            else: ftype = None
+            # load json data
+            lvl_files = [f for f in os.listdir(self.lvl_path)]
+            for l in lvl_files:
+                if l.endswith(".json"): ftype = 'json'
+                else: ftype = None
 
-            # get dict name
-            level_name = self.get_level_name(l)
-            l = os.path.join(self.lvl_path, l)
+                level_name = self.get_level_name(l)
+                l = os.path.join(self.lvl_path, l)
 
-            # set json data
-            if ftype == 'json':
-                with open(l,'r') as f:
-                    self.levels[level_name] = json.loads(f.read())
+                if ftype == 'json':
+                    print "Level name: " + level_name
+                    with open(l,'r') as f:
+                        self.levels[level_name] = json.loads(f.read())
 
-            # set tmx data
-            elif ftype == 'tmx':
-                tmx_data = load_pygame(l)
-                self.tmx_levels[level_name] = tmx_data
-            else:
-                pass
+            # load tmx data
+            tmx_files = [f for f in os.listdir(self.tmx_path)]
+            for l in tmx_files:
+                if l.endswith(".tmx"): ftype = "tmx"
+                else: ftype = None
+
+                level_name = self.get_level_name(l)
+                l = os.path.join(self.tmx_path, l)
+
+                if ftype == "tmx":
+                    with open(l, "r") as f:
+                        self.tmx_levels[level_name] = load_pygame(l)
+
+        except Exception as e:
+            self.game.debug("LevelManager.load_all_levels: " + str(e))
 
     def load_level(self, name):
         level_info = self.levels[name]
-        self.level = name
 
         # update game music
         try: self.game.music.stop()
         except: pass
-        self.game.music            = self.game.rsc.music[name]
+        self.game.music            = self.game.rsc.music[level_info['music']]
         self.game.music.set_volume(self.game.bg_vol)
         self.game.music.play(-1)
 
@@ -66,15 +77,21 @@ class LevelManager:
         for e in self.game.entities.sprites():
             if e.block_id not in ["player", "bot", "bg"]:
                 e.kill()
-        spawn = level_info["spawn"]
+                del e
 
         # reset positions
+        if self.level in level_info["coming_from"]:
+            spawn = level_info["coming_from"][self.level]
+        else:
+            spawn = level_info["spawn"]
+
+        self.level = name
         self.game.player.set_pos(spawn[0], spawn[1])
         for bot in self.game.bots:
             player_rect = self.game.player.rect
             x, y = player_rect.x, player_rect.y
-            rand_x = random.choice( range(x-64, x+64) )
-            rand_y = random.choice( range(y-64, y+64) )
+            rand_x = random.choice(range(x - 64, x + 64))
+            rand_y = random.choice(range(y - 64, y + 64))
             bot.set_pos(rand_x, rand_y)
 
         # calculate map size and object ratio for collidable objects
@@ -87,6 +104,8 @@ class LevelManager:
 
         # create invisible collidable objects
         walls = list()
+        self.game.transport_rects = {}
+        self.game.tests = []
         for obj in tile_map.objects:
             x, y = obj.x, obj.y
             w, h = obj.width, obj.height
@@ -94,7 +113,20 @@ class LevelManager:
             w, h = w * ratio_w, h * ratio_h
 
             rect = pygame.Rect(x, y, w, h)
-            walls.append(rect)
+
+            if obj.name is not None:
+                name = str(obj.name)
+                if name in MOBS: # create new mob
+                    new_mob = MOBS[name](self.game)
+                    new_mob.set_pos(x, y)
+                    self.game.entities.add(new_mob)
+
+                else:
+                    self.game.transport_rects[name] = rect
+                    image = pygame.Surface((w, h))
+                    self.game.tests.append([rect, image])
+            else:
+                walls.append(rect)
 
         # set collidable objects
         self.collisions[name] = walls

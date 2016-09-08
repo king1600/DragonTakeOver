@@ -1,6 +1,21 @@
 import sys
 import os
 
+try:
+    import PySide
+    import pygame
+    import pytmx
+except:
+    if 'nt' in os.name:
+        command = "C:\\Python27\\Scripts\\pip "
+    else:
+        command = "pip "
+    command += "install PySide pytmx"
+    os.system(command)
+
+    raw_input("Click exit and restart program!")
+    sys.exit()
+
 from PySide.QtGui import QWidget, QApplication
 from widgets import *
 from Game import Game
@@ -57,8 +72,9 @@ class MainWindow(QWidget):
 def load_game(win):
     win.game.init(win.CHARACTER)
     if win.NEW_GAME:
-        #win.game.scences.load_scence(1)
+        #win.game.scenes.load_scene(1)
         win.game.manager.load_level("village")
+        win.game.scenes.load_scene(2)
     win.game.run()
 
 class temp:

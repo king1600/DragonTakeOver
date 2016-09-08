@@ -14,6 +14,7 @@ sounds = {
 1. town = village.ogg
 
 2. Snow
+ - map names: "ice_land.json", "ice_base.json"
  - snow drags (basic)
  - icehogs (shoot spikes)
  - Glaciers (Shoot glaciers and slow hit)
@@ -25,6 +26,7 @@ sounds = {
 	- music: "waves.ogg"
 
 3. Swamp
+ - map names: "swamp.json", "swamp_base.json"
  - blobs (basic)
  - mayshroms (every 3 secs emit poison)
  - GlothTrees +delay(shoot wave of slime, 1s after aggro/in range)
@@ -36,6 +38,7 @@ sounds = {
 	- music: "vibez_hd.ogg"
 
 4. Hell
+ - map names: "hell.json", "hell_base.json"
  - minion (basic)
  - pepperJacks (beef up & charge in range)+end_delay
  - Furnaces (Flamethrower for 3 sec)+delay +cooldown
@@ -46,6 +49,7 @@ sounds = {
 	- music: "waves.ogg"
 
 5. The Nova Void
+ - map names: "void.json", "void_base.json"
  - dark blob (+dmg)
  - dark Glaciers (+speed)
  - dark Furnaces (lower delay)
