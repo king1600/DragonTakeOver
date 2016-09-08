@@ -1,0 +1,11 @@
+{
+  "music":"love_live",
+  "map":"ice.tmx",
+  "width":1640,
+  "height":900,
+  "size":[1640, 900],
+  "spawn":[1500, 240],
+  "coming_from":{
+    "ice_base":[60, 450]
+  }
+}
