@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="22" tilewidth="32" tileheight="32" nextobjectid="19">
  <tileset firstgid="1" name="snow and trees" tilewidth="32" tileheight="32" tilecount="45" columns="9">
-  <image source="../../../../Pictures/temp game photos/Snow Tileset (32x32).png" width="288" height="160"/>
+  <image source="Snow Tileset (32x32).png" width="288" height="160"/>
  </tileset>
  <layer name="Tile Layer 1" width="40" height="22">
   <data encoding="csv">
