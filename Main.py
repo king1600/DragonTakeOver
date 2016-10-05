@@ -72,7 +72,7 @@ class MainWindow(QWidget):
 def load_game(win):
     win.game.init(win.CHARACTER)
     if win.NEW_GAME:
-        #win.game.scenes.load_scene(1)
+        win.game.scenes.load_scene(1)
         win.game.manager.load_level("village")
         win.game.scenes.load_scene(2)
     win.game.run()
